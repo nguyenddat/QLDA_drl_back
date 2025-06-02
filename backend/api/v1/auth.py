@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from database.init_db import get_db
 from models.user import User
 from schemas.auth import UserCreate
-from services.auth import create_access_token, create_refresh_token
+from services.auth import create_access_token, create_refresh_token, admin_required
 
 router = APIRouter()
 
@@ -17,7 +17,8 @@ router = APIRouter()
 @router.post("/register")
 def register(
     user_data: UserCreate, 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin_required = Depends(admin_required)
 ) -> Any:
     
     """Đăng ký người dùng mới"""

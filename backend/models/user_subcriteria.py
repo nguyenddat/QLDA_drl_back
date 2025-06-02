@@ -14,7 +14,7 @@ class User_SubCriteria(BareBaseModel):
     class_leader_score = Column(Integer, nullable=True)
     teacher_score = Column(Integer, nullable=True)
     
-    review_by = Column(Enum("self", "class_leader", "teacher", name="review_by"), default="self")
+    review_by = Column(Enum("pending", "self", "class_leader", "teacher", name="review_by"), default="pending")
     last_score = Column(Integer, nullable=True)
 
 
