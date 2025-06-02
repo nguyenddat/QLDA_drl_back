@@ -6,7 +6,7 @@ from fastapi_sqlalchemy import DBSessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from api.v1 import auth, criteria, evidence, user
+from api.v1 import auth, criteria, evidence, user, recommend
 
 def get_application() -> FastAPI:
     application = FastAPI()
@@ -22,6 +22,7 @@ def get_application() -> FastAPI:
     application.include_router(criteria.router, prefix="/api/v1", tags=["criteria"])
     application.include_router(evidence.router, prefix="/api/v1", tags=["evidence"])
     application.include_router(user.router, prefix="/api/v1", tags=["User"])
+    application.include_router(recommend.router, prefix="/api/v1", tags=["Recommend"])
 
     return application
 
