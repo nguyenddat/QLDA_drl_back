@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from database.init_db import get_db
 from models.user import User
 from schemas.auth import UserCreate
-from services.auth import create_access_token, create_refresh_token, admin_required
+from services.auth import create_access_token, create_refresh_token, admin_required, get_current_user
 
 router = APIRouter()
 
@@ -73,3 +73,22 @@ async def login_for_access_token(
             }}
         )
 
+@router.get("/me")
+def read_me(
+    current_user: User = Depends(get_current_user)
+):
+    """Lấy thông tin người dùng hiện tại"""
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "success": True,
+            "message": "Lấy thông tin người dùng thành công",
+            "payload": {
+                "user": {
+                    "id": current_user.id,
+                    "username": current_user.username,
+                    "role": current_user.role,
+                }
+            }
+        }
+    )
