@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from database.init_db import get_db
 from models import criteria, subcriteria, user_subcriteria
 from services.auth import get_current_user
+from schemas.criteria import CriteriaUpdate
 
 router = APIRouter()
 
@@ -70,6 +71,50 @@ def get_criteria(
             "message": "Lấy tiêu chí thành công",
             "payload": {
                 "criteria": resp_objs
+            }
+        }
+    )
+
+@router.put("/criteria")
+def update_criteria(
+    criteria_data: CriteriaUpdate,
+    db=Depends(get_db),
+    current_user: Any = Depends(get_current_user)
+):
+    existed = db.query(user_subcriteria.User_SubCriteria).filter(
+        user_subcriteria.User_SubCriteria.id == criteria_data.id,
+        user_subcriteria.User_SubCriteria.user_id == current_user.id,
+        user_subcriteria.User_SubCriteria.semester == criteria_data.semester
+    )
+
+    existed = existed.first()
+    if not existed:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "success": False,
+                "message": "Không tìm thấy tiêu chí",
+                "payload": {}
+            }
+        )
+    
+    existed.self_score = criteria_data.score
+    if current_user.role == "student":
+        existed.review_by = "self"
+    else:
+        existed.review_by = current_user.role
+    
+    existed.last_score = criteria_data.score
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "success": True,
+            "message": "Cập nhật tiêu chí thành công",
+            "payload": {
+                "criteria_id": existed.id,
+                "score": existed.self_score
             }
         }
     )

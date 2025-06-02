@@ -11,6 +11,7 @@ class SubCriteria(BareBaseModel):
     min_score = Column(Integer, nullable=False)
     max_score = Column(Integer, nullable=False)
 
+    editable = Column(Boolean, default=False)
     required_evidence = Column(Boolean, default=False)
 
     criteria = relationship("Criteria", back_populates="subcriteria")
