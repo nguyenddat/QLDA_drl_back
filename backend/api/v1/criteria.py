@@ -81,9 +81,17 @@ def update_criteria(
     db=Depends(get_db),
     current_user: Any = Depends(get_current_user)
 ):
+    if current_user.role == "student":
+        review_by = "self"
+        user_id = current_user.id
+    else:
+        review_by = current_user.role
+        user_id = criteria_data.user_id
+    
+
     existed = db.query(user_subcriteria.User_SubCriteria).filter(
         user_subcriteria.User_SubCriteria.id == criteria_data.id,
-        user_subcriteria.User_SubCriteria.user_id == current_user.id,
+        user_subcriteria.User_SubCriteria.user_id == user_id,
         user_subcriteria.User_SubCriteria.semester == criteria_data.semester
     )
 
@@ -99,11 +107,7 @@ def update_criteria(
         )
     
     existed.self_score = criteria_data.score
-    if current_user.role == "student":
-        existed.review_by = "self"
-    else:
-        existed.review_by = current_user.role
-    
+    existed.review_by = review_by
     existed.last_score = criteria_data.score
     db.commit()
 

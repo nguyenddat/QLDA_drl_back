@@ -4,5 +4,6 @@ from pydantic import BaseModel
 
 class CriteriaUpdate(BaseModel):
     id: int
-    semester: int
     score: int
+    semester: int
+    user_id: Optional[int] = None
