@@ -14,6 +14,43 @@ from schemas.evidence import EvidencePost, EvidenceUpdate
 
 router = APIRouter()
 
+@router.get("/evidence")
+def get_evidence(
+    semester: int,
+    db = Depends(get_db),
+    current_user = Depends(get_current_user),
+):
+    evidences = db.query(evidence_subcriteria.Evidence_SubCriteria).filter(
+        evidence_subcriteria.Evidence_SubCriteria.semester == semester
+    )
+
+    if current_user.role == "student":
+        evidences = evidences.filter(
+            evidence_subcriteria.Evidence_SubCriteria.user_id == current_user.id
+        )
+    
+    evidences = evidences.all()
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "success": True,
+            "message": "Lấy dữ liệu thành công",
+            "payload": {
+                "evidence": [{"id": item.id,
+                            "user_id": item.user_id,
+                            "subcriteria_id": item.subcriteria_id,
+                            "semester": item.semester,
+                            "description": item.description,
+                            "file_path": item.file_path,
+                            "status": item.status}
+                            for item in evidences]
+            }
+        }
+    )
+
+
+
+
 @router.post("/evidence")
 def submit_evidence(
     evidence_data: EvidencePost,

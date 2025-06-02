@@ -13,7 +13,6 @@ from services.auth import create_access_token, create_refresh_token, admin_requi
 
 router = APIRouter()
 
-
 @router.post("/register")
 def register(
     user_data: UserCreate, 
@@ -73,3 +72,4 @@ async def login_for_access_token(
                 "token_type": "bearer"
             }}
         )
+

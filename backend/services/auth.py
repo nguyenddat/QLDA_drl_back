@@ -61,6 +61,8 @@ async def get_current_user(
 def admin_required(current_user: User = Depends(get_current_user)):
     """Kiểm tra xem người dùng có phải là admin hay không"""
     if not current_user.role != "admin":
+        print(current_user.role)
+        print(current_user.username)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to perform this action"
