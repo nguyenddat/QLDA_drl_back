@@ -60,7 +60,7 @@ async def get_current_user(
 
 def admin_required(current_user: User = Depends(get_current_user)):
     """Kiểm tra xem người dùng có phải là admin hay không"""
-    if not current_user.role != "admin":
+    if current_user.role != "admin":
         print(current_user.role)
         print(current_user.username)
         raise HTTPException(
